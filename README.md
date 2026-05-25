@@ -20,7 +20,7 @@ e adicione:
 | `PORTAL_USERNAME` | Seu usuário do Portal de Compras Públicas  |
 | `PORTAL_PASSWORD` | Sua senha do portal                        |
 | `SESSION_CHAVE`   | `467564` (ou a chave da sessão desejada)   |
-| `EMAIL_FROM`      | Seu Gmail (ex: seuemail@gmail.com)         |
+| `EMAIL_FROM`      | Seu Gmail (vigserv1296@gmail.com)         |
 | `EMAIL_PASSWORD`  | App Password do Gmail (16 caracteres)      |
 | `EMAIL_TO`        | E-mail que receberá os alertas             |
 
