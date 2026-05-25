@@ -1,0 +1,53 @@
+name: 🔔 Monitor Sessão Pública
+
+on:
+  schedule:
+    # Verifica a cada 5 minutos, 24h por dia
+    - cron: '*/5 * * * *'
+  workflow_dispatch:   # permite disparar manualmente pelo site do GitHub
+
+permissions:
+  contents: write      # necessário para salvar o state.json no repo
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # 1. Baixa o repositório
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Configura Python
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 3. Instala dependências
+      - name: 📦 Instalar dependências
+        run: pip install -r requirements.txt
+
+      # 4. Executa o monitor
+      - name: 🔍 Executar monitor
+        env:
+          PORTAL_USERNAME: ${{ secrets.PORTAL_USERNAME }}
+          PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
+          SESSION_CHAVE:   ${{ secrets.SESSION_CHAVE }}
+          EMAIL_FROM:      ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASSWORD:  ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO:        ${{ secrets.EMAIL_TO }}
+        run: python monitor.py
+
+      # 5. Salva o estado atualizado de volta no repositório
+      - name: 💾 Salvar estado
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name  "GitHub Actions"
+          git add state.json
+          git diff --staged --quiet || git commit -m "chore: update monitor state [skip ci]"
+          git push
